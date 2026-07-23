@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: macos-14
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install validation tools
+        run: brew install ripgrep jq
+      - name: Validate scripts and configuration
+        run: |
+          node --check skills/wechat-article-publisher/scripts/prepare.mjs
+          node --check skills/wechat-article-publisher/scripts/upload-draft.mjs
+          jq -e . skills/wechat-article-publisher/config.example.json >/dev/null
+          ruby -e 'require "yaml"; ARGV.each { |file| YAML.load_file(file) }' skills/*/agents/openai.yaml
+      - name: Run release checks
+        run: |
+          sh tests/public-package-check.sh
+          sh tests/safety-scan-regression.sh
+          sh tests/skill-contract-check.sh
+          sh tests/prepare-smoke.sh
+          sh tests/upload-validation.sh

@@ -1,0 +1,4 @@
+{
+  "appId": "your-wechat-official-account-app-id",
+  "keychainService": "codex.wechat.appsecret"
+}

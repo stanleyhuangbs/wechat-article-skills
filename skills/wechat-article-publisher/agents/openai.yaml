@@ -1,0 +1,4 @@
+interface:
+  display_name: "公众号文章发布"
+  short_description: "生成简洁排版、文字首图并上传公众号草稿"
+  default_prompt: "使用 $wechat-article-publisher，把这篇文章排版并上传到已授权的微信公众号草稿箱。"
