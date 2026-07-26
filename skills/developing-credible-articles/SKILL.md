@@ -155,6 +155,16 @@ Show the author:
 
 Ask for explicit confirmation. Do not begin the publication draft until the author confirms, unless they explicitly request an exploratory draft. For this gate, “draft” includes title options, a polished opening, a sample paragraph, narrative scene, article-ready conclusion, or any prose likely to be pasted into publication. An exploratory draft must remain visibly labeled and may not convert unresolved claims into prose that sounds settled.
 
+### 7.1 Decide the Cover Mode
+
+Before drafting a WeChat article, classify the assignment:
+
+- `Skill 分享`: default to **有封面图** because the visual helps readers recognize a concrete tool, workflow, or release.
+- `观点思考`: default to **无封面模式** because the author's argument and opening should carry the reading impulse.
+- If the type is genuinely ambiguous, show one compact **选择框** with `有封面图` and `无封面图`. Do not ask again when the user has already chosen or the content type is clear.
+
+Record the result as `cover` or `none` and pass it to the publishing Skill. The user may override either default at any time.
+
 ### 8. Draft in Human Language
 
 Write in the user's language unless they request another. Select an article form that matches the available material. Use the author's vocabulary, examples, judgments, and emotional stakes. Prefer concrete nouns, observable actions, specific people, and uneven sentence rhythm. Let knowledge appear where it helps the story rather than announcing a lecture.
@@ -178,6 +188,10 @@ Avoid:
 - another writer's identity, fixed ending, catchphrases, profanity, or punctuation habits;
 - claims made stronger merely to improve the title.
 
+For **无封面模式**, 正文第一句 has to do the work a cover would otherwise do. It must state or sharply imply the article's core 主旨, create a real unresolved tension, and make the intended reader want the next sentence. Do not use generic scene-setting, a slogan, a rhetorical question with no substance, or suspense unrelated to the thesis.
+
+Treat **去 AI 味** as an editorial audit, not as decorative slang. Remove generic era openings, symmetrical three-part lists, repetitive “不是……而是……”, stacked conclusions, fake quotations, over-explained transitions, uniform paragraph rhythm, and empty intensity words. Preserve irregular but readable rhythm, concrete judgments, and the author's own confirmed language. Never add invented experiences or mannerisms merely to appear human.
+
 Do not manufacture “human flaws” or slang. Natural prose comes from real thought and detail, not decorative informality.
 
 ### 9. Final Audit
@@ -191,7 +205,7 @@ Audit every material sentence, not only the source list:
 
 Then perform a language pass for generic AI phrasing, false precision, repeated sentence patterns, unexplained jargon, and claims without a human owner.
 
-The final language pass must test four layers: mechanical AI markers, narrative rhythm, content support and fairness, and the felt presence of a real author. Do not “humanize” by inserting unverified detail or borrowed mannerisms.
+The final language pass must test four layers: mechanical AI markers, narrative rhythm, content support and fairness, and the felt presence of a real author. In 无封面模式, audit the first sentence separately for 主旨 relevance and forward pull. Do not “humanize” by inserting unverified detail or borrowed mannerisms.
 
 Return the draft with an evidence status and concise counter-analysis. Never announce “fact-checked” if any material claim remains unresolved.
 

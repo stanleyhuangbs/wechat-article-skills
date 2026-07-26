@@ -1,4 +1,4 @@
 interface:
   display_name: "可信文章共创"
   short_description: "通过对话、核验与反方审查，把真实想法发展成可信文章"
-  default_prompt: "使用 $developing-credible-articles，通过逐步问答把我的想法整理成一篇可信、自然的文章。"
+  default_prompt: "使用 $developing-credible-articles，通过逐步问答把我的想法整理成一篇可信、自然、去 AI 味的文章，并按 Skill 分享或观点思考选择封面模式。"

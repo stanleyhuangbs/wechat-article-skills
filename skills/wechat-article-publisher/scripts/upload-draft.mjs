@@ -25,7 +25,7 @@ function parseArgs(argv) {
     }
     values[key.slice(2)] = value;
   }
-  for (const required of ["metadata", "html", "cover"]) {
+  for (const required of ["metadata", "html"]) {
     if (!values[required]) throw new Error(`Missing --${required}`);
   }
   return values;
@@ -177,6 +177,10 @@ async function main() {
   if (!appId) throw new Error("Set WECHAT_APP_ID");
 
   const metadata = JSON.parse(readFileSync(resolve(args.metadata), "utf8"));
+  if (metadata.coverMode === "none") {
+    throw new Error("No-cover drafts require the signed-in WeChat browser editor; the draft API path requires a cover");
+  }
+  if (!args.cover) throw new Error("Missing --cover for cover mode");
   const html = readFileSync(resolve(args.html), "utf8");
   const content = extractArticleContent(html);
   const coverPath = resolve(args.cover);

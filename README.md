@@ -2,7 +2,7 @@
 
 把一个还没想清楚的中文选题，发展成经得起核验和反方追问的文章，再安全地准备成微信公众号草稿。
 
-它不是一个“输入标题、自动生成爆款”的提示词包。它把真正困难的两件事拆开处理：先帮助作者形成可信观点，再把确认后的文章排版、生成文字首图并保存到公众号草稿箱。
+它不是一个“输入标题、自动生成爆款”的提示词包。它把真正困难的两件事拆开处理：先帮助作者形成可信观点，再根据内容类型选择有封面或无封面模式，排版后安全保存到公众号草稿箱。
 
 ```text
 想法
@@ -10,7 +10,8 @@
   → 建立主张与证据台账
   → 反方检查与作者确认
   → 完成自然中文文章
-  → 排版、首图与公众号草稿
+  → 选择有图 / 无图模式
+  → 排版与公众号草稿
 ```
 
 ## 为什么做成两个 Skill
@@ -18,7 +19,7 @@
 | Skill | 帮你完成什么 | 核心边界 |
 |---|---|---|
 | `developing-credible-articles` | 从模糊想法中找到真正值得写的命题，补证据、查因果、找反例，形成可信文章 | 不编造事实、经历、引语或作者情绪；写稿前必须确认论证和证据处理 |
-| `wechat-article-publisher` | 把确认后的 Markdown 文章转成微信友好的 HTML、文字首图和元数据，并按授权情况上传草稿箱 | 准备发布包、上传草稿和公开发布是三种不同动作；不会自动公开发布 |
+| `wechat-article-publisher` | 把确认后的 Markdown 文章转成微信友好的 HTML 和元数据，按内容类型决定是否生成封面，并保存到草稿箱 | 准备发布包、上传草稿和公开发布是三种不同动作；不会自动公开发布 |
 
 把它们分开，是为了让“写得可信”和“发布得安全”各自拥有清晰的权限边界。
 
@@ -41,6 +42,10 @@
 **不靠模仿某个作者制造“活人感”。** 自然语言来自真实经历、真实判断和作者自己的表达材料，不复制在世作者的身份、口癖或固定结尾。
 
 **发布动作可追溯。** 文章准备、草稿上传和公开发布分别确认。没有单独授权时，流程最多停在草稿箱。
+
+**封面模式跟着内容走。** Skill 分享默认有封面图；观点思考默认无封面图，直接靠正文第一句的主旨和张力吸引阅读；无法判断类型时才显示选择框。用户的明确选择始终优先。
+
+**去 AI 味不是加口语词。** 成稿会检查空泛时代开场、对称排比、重复转折、过度总结、统一段落节奏和没有作者归属的判断，同时禁止靠编造经历或口癖假装“真人感”。
 
 ## 3 分钟安装
 
@@ -120,6 +125,7 @@ node skills/wechat-article-publisher/scripts/prepare.mjs \
   --title "AI 让管理更简单了吗？" \
   --author "示例作者" \
   --summary "一篇讨论 AI 与管理成本的文章" \
+  --cover-mode cover \
   --cover-copy "管理成本没有消失，只是换了位置" \
   --brand "示例公众号" \
   --account-type "service"
@@ -127,6 +133,21 @@ node skills/wechat-article-publisher/scripts/prepare.mjs \
 
 `--brand` 可省略，默认显示“公众号文章”。运行完成后先检查 `article.html` 和 `cover.png`。
 `--account-type` 支持 `personal`、`subscription`、`service` 和 `unknown`，省略时默认为 `unknown`。
+
+观点思考文章可直接生成无封面发布包：
+
+```bash
+node skills/wechat-article-publisher/scripts/prepare.mjs \
+  --input article.md \
+  --output output/my-article \
+  --title "真正拉开差距的不是 AI 熟练度" \
+  --author "示例作者" \
+  --summary "一篇关于 AI 与判断力的观点文章" \
+  --cover-mode none \
+  --account-type "personal"
+```
+
+无封面模式不会生成 `cover.svg` 或 `cover.png`。保存草稿时进入已登录的公众号后台“图文”编辑入口，直接粘贴排版正文，不上传图片，再保存草稿。当前官方草稿 API 流程仍要求封面，因此无封面模式不会伪装成 API 上传成功。
 
 ## 配置微信公众号草稿 API
 
@@ -193,7 +214,8 @@ node skills/wechat-article-publisher/scripts/upload-draft.mjs \
 - 证据不足时显示为“待核验”，不会伪装成确定事实
 - AppSecret 推荐保存在 macOS Keychain
 - 仓库只提供 `config.example.json`，不会包含真实账号配置
-- 上传脚本只创建公众号草稿，不调用公开发布接口
+- 有封面模式的上传脚本只创建公众号草稿，不调用公开发布接口
+- 无封面模式使用已登录的公众号图文编辑器，不上传图片
 - 正文图片默认关闭，避免不明版权和远程图片风险
 
 更完整的边界见：
@@ -213,6 +235,10 @@ node skills/wechat-article-publisher/scripts/upload-draft.mjs \
 | 密钥持久保存 | macOS Keychain |
 
 文章共创 Skill 本身不依赖微信公众号账号。
+
+## 版本
+
+当前版本：`1.1.0`
 
 ## 仓库结构
 

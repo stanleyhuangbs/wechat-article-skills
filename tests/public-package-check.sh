@@ -5,6 +5,7 @@ ROOT=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
 
 test -f "$ROOT/README.md"
 test -f "$ROOT/LICENSE"
+test -f "$ROOT/VERSION"
 test -f "$ROOT/.gitignore"
 test -f "$ROOT/.github/workflows/ci.yml"
 test -f "$ROOT/skills/developing-credible-articles/SKILL.md"

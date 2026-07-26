@@ -5,7 +5,8 @@ ROOT=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
 OUTPUT=$(mktemp -d)
 DEFAULT_OUTPUT=$(mktemp -d)
 INJECTION_OUTPUT=$(mktemp -d)
-trap 'rm -rf "$OUTPUT" "$DEFAULT_OUTPUT" "$INJECTION_OUTPUT"' EXIT
+NO_COVER_OUTPUT=$(mktemp -d)
+trap 'rm -rf "$OUTPUT" "$DEFAULT_OUTPUT" "$INJECTION_OUTPUT" "$NO_COVER_OUTPUT"' EXIT
 
 node "$ROOT/skills/wechat-article-publisher/scripts/prepare.mjs" \
   --input "$ROOT/tests/fixtures/article.md" \
@@ -44,5 +45,19 @@ node "$ROOT/skills/wechat-article-publisher/scripts/prepare.mjs" \
 
 ! rg -q '</script><script>window.__injected' "$INJECTION_OUTPUT/article.html"
 rg -q '\\u003c/script\\u003e' "$INJECTION_OUTPUT/article.html"
+
+node "$ROOT/skills/wechat-article-publisher/scripts/prepare.mjs" \
+  --input "$ROOT/tests/fixtures/article.md" \
+  --output "$NO_COVER_OUTPUT" \
+  --title "无封面测试" \
+  --cover-mode "none" \
+  --account-type "personal"
+
+test -s "$NO_COVER_OUTPUT/article.html"
+test -s "$NO_COVER_OUTPUT/metadata.json"
+test ! -e "$NO_COVER_OUTPUT/cover.svg"
+test ! -e "$NO_COVER_OUTPUT/cover.png"
+jq -e '.coverMode == "none"' "$NO_COVER_OUTPUT/metadata.json" >/dev/null
+jq -e '.draftTransport == "browser-editor"' "$NO_COVER_OUTPUT/metadata.json" >/dev/null
 
 echo "prepare smoke test passed"

@@ -14,7 +14,7 @@ function parseArgs(argv) {
     }
     values[key.slice(2)] = value;
   }
-  for (const required of ["input", "output", "title", "cover-copy"]) {
+  for (const required of ["input", "output", "title"]) {
     if (!values[required]) throw new Error(`Missing --${required}`);
   }
   return values;
@@ -108,6 +108,14 @@ function normalizeAccountType(value) {
     throw new Error("--account-type must be unknown, personal, subscription, or service");
   }
   return accountType;
+}
+
+function normalizeCoverMode(value) {
+  const coverMode = (value || "cover").trim().toLowerCase();
+  if (!new Set(["cover", "none"]).has(coverMode)) {
+    throw new Error("--cover-mode must be cover or none");
+  }
+  return coverMode;
 }
 
 function weightedLength(char) {
@@ -239,7 +247,11 @@ const markdown = readFileSync(inputPath, "utf8").trim();
 const title = args.title.trim();
 const author = (args.author || "").trim();
 const summary = (args.summary || "").trim();
-const coverCopy = args["cover-copy"].trim();
+const coverMode = normalizeCoverMode(args["cover-mode"]);
+const coverCopy = (args["cover-copy"] || "").trim();
+if (coverMode === "cover" && !coverCopy) {
+  throw new Error("Missing --cover-copy for cover mode");
+}
 const brand = (args.brand || "公众号文章").trim();
 const accountType = normalizeAccountType(args["account-type"]);
 
@@ -251,18 +263,23 @@ writeFileSync(join(outputDir, "article.html"), renderHtml({
   bodyHtml: renderMarkdown(markdown),
   bodyText: plainText(markdown),
 }));
-writeFileSync(join(outputDir, "cover.svg"), renderCoverSvg(coverCopy, brand));
 writeFileSync(join(outputDir, "metadata.json"), `${JSON.stringify({
   title,
   author,
   summary,
   coverCopy,
+  coverMode,
   accountType,
   publishMode: "api-draft-or-manual-handoff",
+  draftTransport: coverMode === "cover" ? "api-draft-or-browser-editor" : "browser-editor",
   publicPublishConfirmed: false,
 }, null, 2)}\n`);
 
+rmSync(join(outputDir, "cover.svg"), { force: true });
 rmSync(join(outputDir, "cover.png"), { force: true });
-renderCoverPng(coverCopy, brand, outputDir);
+if (coverMode === "cover") {
+  writeFileSync(join(outputDir, "cover.svg"), renderCoverSvg(coverCopy, brand));
+  renderCoverPng(coverCopy, brand, outputDir);
+}
 
 process.stdout.write(`${outputDir}\n`);
