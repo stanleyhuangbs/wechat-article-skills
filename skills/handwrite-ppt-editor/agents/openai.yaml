@@ -1,0 +1,4 @@
+interface:
+  display_name: "可编辑手写 PPT"
+  short_description: "把文档或逻辑变成可编辑手写 HTML，并从确认版本导出 PDF"
+  default_prompt: "使用 $handwrite-ppt-editor。先和我确认页数与故事线，再生成可编辑手写 HTML；我修改确认后，再从当前版本导出 PDF。保留手绘 SVG 流程图、表格和示意图。"
