@@ -20,9 +20,9 @@
 |---|---|---|
 | `developing-credible-articles` | 从模糊想法中找到真正值得写的命题，补证据、查因果、找反例，形成可信文章 | 不编造事实、经历、引语或作者情绪；写稿前必须确认论证和证据处理 |
 | `wechat-article-publisher` | 把确认后的 Markdown 文章转成微信友好的 HTML 和元数据，按内容类型决定是否生成封面，并保存到草稿箱 | 准备发布包、上传草稿和公开发布是三种不同动作；不会自动公开发布 |
-| `handwrite-ppt-editor` | 把文档、文章或逻辑变成可编辑的手写 HTML，并从确认后的当前版本导出 PDF | 保留手绘 SVG、流程图和表格；先 HTML，后 PDF |
-
 把它们分开，是为了让“写得可信”和“发布得安全”各自拥有清晰的权限边界。
+
+可编辑手写演示文稿 Skill 已独立维护在 [`handwrite-ppt-editor`](https://github.com/stanleyhuangbs/handwrite-ppt-editor)，不属于本仓库的公众号写作与发布流程。
 
 ## 它适合谁
 
