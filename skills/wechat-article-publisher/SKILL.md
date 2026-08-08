@@ -1,6 +1,6 @@
 ---
 name: wechat-article-publisher
-description: Use when a user wants to prepare, format, upload, save, or publish a Chinese article to a WeChat Official Account, including 微信公众号排版、首图、草稿箱、发布包、一句话发布.
+description: Use when a user wants to write, format, upload, save, or publish a Chinese WeChat Official Account article, including 微信公众号排版、橙色科技教程风、代码块、卡片标题、首图、草稿箱、发布包或一句话发布.
 ---
 
 # WeChat Article Publisher
@@ -56,6 +56,7 @@ node skills/wechat-article-publisher/scripts/prepare.mjs \
 
 `--brand` controls the small footer on the cover and defaults to `公众号文章`.
 `--account-type` accepts `personal`, `subscription`, `service`, or `unknown`; it defaults to `unknown`.
+`--style` accepts `minimal` or `orange-tech`; it defaults to `minimal`. Use `orange-tech` for Skill、工具、教程和操作指南文章，生成橙色胶囊标题、暖色引用卡和深色终端代码块。
 
 7. Inspect `article.html` and `metadata.json`; inspect `cover.png` only in 有封面图 mode.
 8. For **无封面图**, use the signed-in公众号后台 **图文** entry (the tab the user may refer to as “贴图”). Paste the formatted body directly, do not upload or select any image, and save it to the draft box. Prefer this browser-editor route on the user's personal computer for 观点思考 articles.
@@ -79,6 +80,10 @@ node skills/wechat-article-publisher/scripts/upload-draft.mjs \
 - `cover.svg` and `cover.png`: deterministic exact-text cover, present only in 有封面图 mode.
 - `metadata.json`: publishing fields and safety state.
 - `sources.md`: evidence notes when supplied by the article workflow.
+
+## Style invocation
+
+In a writing request, say “用橙色科技教程风排版”。 For the prepared package command, append `--style orange-tech`; omit it to keep the existing minimal style.
 
 ## Hard Stops
 

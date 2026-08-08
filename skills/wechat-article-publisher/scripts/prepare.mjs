@@ -38,10 +38,12 @@ function renderInline(value) {
   return rendered;
 }
 
-function renderMarkdown(markdown) {
+function renderMarkdown(markdown, style = "minimal") {
+  const orange = style === "orange-tech";
   const blocks = [];
   const lines = markdown.replaceAll("\r\n", "\n").split("\n");
   let paragraph = [];
+  let code = null;
 
   const flush = () => {
     if (!paragraph.length) return;
@@ -51,6 +53,16 @@ function renderMarkdown(markdown) {
 
   for (const rawLine of lines) {
     const line = rawLine.trim();
+    if (line.startsWith("```")) {
+      if (code) {
+        blocks.push(orange
+          ? `<section style="margin:20px 0;padding:16px 20px;background:#1e1e1e;border-radius:8px;overflow:auto;color:#d4d4d4;font:13px/1.7 SFMono-Regular,Consolas,monospace;white-space:pre;">${escapeHtml(code.join("\n"))}</section>`
+          : `<pre style="margin:1.8em 0;padding:15px 18px;background:#f7f6f4;border-radius:4px;overflow:auto;font:13px/1.7 SFMono-Regular,Consolas,monospace;">${escapeHtml(code.join("\n"))}</pre>`);
+        code = null;
+      } else { flush(); code = []; }
+      continue;
+    }
+    if (code) { code.push(rawLine); continue; }
     if (!line) {
       flush();
       continue;
@@ -62,7 +74,9 @@ function renderMarkdown(markdown) {
     }
     if (/^#{1,3}\s+/.test(line)) {
       flush();
-      blocks.push(`<p style="margin:2.2em 0 1em;font-size:19px;line-height:1.6;font-weight:650;color:#171717;">${renderInline(line.replace(/^#{1,3}\s+/, ""))}</p>`);
+      blocks.push(orange
+        ? `<h2 style="margin:28px auto 16px;padding:8px 20px;display:table;font-size:17px;font-weight:600;line-height:1.6;text-align:center;color:#fff;background:#ff6a00;border-radius:30px;letter-spacing:.02em;">${renderInline(line.replace(/^#{1,3}\s+/, ""))}</h2>`
+        : `<p style="margin:2.2em 0 1em;font-size:19px;line-height:1.6;font-weight:650;color:#171717;">${renderInline(line.replace(/^#{1,3}\s+/, ""))}</p>`);
       continue;
     }
     if (/^\d+、/.test(line)) {
@@ -72,7 +86,9 @@ function renderMarkdown(markdown) {
     }
     if (line.startsWith("> ")) {
       flush();
-      blocks.push(`<section style="margin:1.8em 0;padding:15px 18px;border-left:3px solid #9d332c;background:#f7f6f4;color:#3f3f3f;font-size:16px;line-height:1.85;">${renderInline(line.slice(2))}</section>`);
+      blocks.push(orange
+        ? `<blockquote style="margin:20px 0;padding:16px 20px;background:#fff8f0;border-left:3px solid #ff6a00;border-radius:0 8px 8px 0;color:#8b4000;font-style:italic;font-size:15px;line-height:1.8;">${renderInline(line.slice(2))}</blockquote>`
+        : `<section style="margin:1.8em 0;padding:15px 18px;border-left:3px solid #9d332c;background:#f7f6f4;color:#3f3f3f;font-size:16px;line-height:1.85;">${renderInline(line.slice(2))}</section>`);
       continue;
     }
     paragraph.push(line);
@@ -253,6 +269,8 @@ if (coverMode === "cover" && !coverCopy) {
   throw new Error("Missing --cover-copy for cover mode");
 }
 const brand = (args.brand || "公众号文章").trim();
+const style = (args.style || "minimal").trim().toLowerCase();
+if (!["minimal", "orange-tech"].includes(style)) throw new Error("--style must be minimal or orange-tech");
 const accountType = normalizeAccountType(args["account-type"]);
 
 copyFileSync(inputPath, join(outputDir, "article.md"));
@@ -260,7 +278,7 @@ writeFileSync(join(outputDir, "article.html"), renderHtml({
   title,
   author,
   summary,
-  bodyHtml: renderMarkdown(markdown),
+  bodyHtml: renderMarkdown(markdown, style),
   bodyText: plainText(markdown),
 }));
 writeFileSync(join(outputDir, "metadata.json"), `${JSON.stringify({
@@ -269,6 +287,7 @@ writeFileSync(join(outputDir, "metadata.json"), `${JSON.stringify({
   summary,
   coverCopy,
   coverMode,
+  style,
   accountType,
   publishMode: "api-draft-or-manual-handoff",
   draftTransport: coverMode === "cover" ? "api-draft-or-browser-editor" : "browser-editor",
