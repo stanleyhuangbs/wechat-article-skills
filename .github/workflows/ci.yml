@@ -24,5 +24,6 @@ jobs:
           sh tests/public-package-check.sh
           sh tests/safety-scan-regression.sh
           sh tests/skill-contract-check.sh
+          node --test tests/prepare-rendering.test.mjs
           sh tests/prepare-smoke.sh
           sh tests/upload-validation.sh
