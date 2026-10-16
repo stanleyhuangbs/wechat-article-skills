@@ -51,18 +51,37 @@ function renderMarkdown(markdown, style = "minimal") {
     paragraph = [];
   };
 
+  const flushCode = () => {
+    if (!code) return;
+    const language = code.language ? ` data-language="${escapeHtml(code.language)}"` : "";
+    const colors = orange ? "background:#1e1e1e;color:#d4d4d4;" : "background:#f7f6f4;color:#2a2a2a;";
+    blocks.push(`<pre style="margin:1.8em 0;padding:15px 18px;${colors}border-radius:4px;font:13px/1.7 SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;"><code${language} style="font:inherit;color:inherit;white-space:pre-wrap;">${escapeHtml(code.lines.join("\n"))}</code></pre>`);
+    code = null;
+  };
+
   for (const rawLine of lines) {
     const line = rawLine.trim();
-    if (line.startsWith("```")) {
-      if (code) {
-        blocks.push(orange
-          ? `<section style="margin:20px 0;padding:16px 20px;background:#1e1e1e;border-radius:8px;overflow:auto;color:#d4d4d4;font:13px/1.7 SFMono-Regular,Consolas,monospace;white-space:pre;">${escapeHtml(code.join("\n"))}</section>`
-          : `<pre style="margin:1.8em 0;padding:15px 18px;background:#f7f6f4;border-radius:4px;overflow:auto;font:13px/1.7 SFMono-Regular,Consolas,monospace;">${escapeHtml(code.join("\n"))}</pre>`);
-        code = null;
-      } else { flush(); code = []; }
+    if (code) {
+      const closing = rawLine.match(/^ {0,3}(`{3,}|~{3,})[ \t]*$/);
+      if (closing && closing[1][0] === code.marker && closing[1].length >= code.length) {
+        flushCode();
+      } else {
+        code.lines.push(rawLine.replace(new RegExp(`^ {0,${code.indent}}`), ""));
+      }
       continue;
     }
-    if (code) { code.push(rawLine); continue; }
+    const opening = rawLine.match(/^( {0,3})(`{3,}|~{3,})(.*)$/);
+    if (opening && !(opening[2][0] === "`" && opening[3].includes("`"))) {
+      flush();
+      code = {
+        marker: opening[2][0],
+        length: opening[2].length,
+        indent: opening[1].length,
+        language: opening[3].trim().split(/\s+/)[0],
+        lines: [],
+      };
+      continue;
+    }
     if (!line) {
       flush();
       continue;
@@ -93,6 +112,7 @@ function renderMarkdown(markdown, style = "minimal") {
     }
     paragraph.push(line);
   }
+  flushCode();
   flush();
   return blocks.join("\n");
 }
@@ -259,7 +279,7 @@ const inputPath = resolve(args.input);
 const outputDir = resolve(args.output);
 mkdirSync(outputDir, { recursive: true });
 
-const markdown = readFileSync(inputPath, "utf8").trim();
+const markdown = readFileSync(inputPath, "utf8");
 const title = args.title.trim();
 const author = (args.author || "").trim();
 const summary = (args.summary || "").trim();

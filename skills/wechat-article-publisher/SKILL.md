@@ -83,7 +83,11 @@ node skills/wechat-article-publisher/scripts/upload-draft.mjs \
 
 ## Style invocation
 
-In a writing request, say “用橙色科技教程风排版”。 For the prepared package command, append `--style orange-tech`; omit it to keep the existing minimal style.
+In a writing request, say “用橙色科技教程风排版”。 For the prepared package command, append `--style orange-tech`; omit it to keep the existing minimal style for ordinary prose.
+
+Both styles support backtick and tilde code fences (at least three matching characters). A closing fence must use the same character, be at least as long as the opening fence, and contain only trailing spaces or tabs. An unclosed fence renders through the end of the article; it never discards the remaining content. The first info-string word is retained as escaped `data-language` metadata on `code`; syntax highlighting is not provided. Fenced code support also applies to `minimal`.
+
+Code uses inline-styled `pre/code` with preserved whitespace and wrapping long lines. Before merging a style change, use [the editor fixture](../../tests/fixtures/orange-tech-editor.md) to verify copy → paste → save draft → reopen → mobile preview in the real WeChat editor. Check code whitespace and long lines, dark background and text contrast, pill headings, and quote cards. Local HTML preview and automated tests do not establish editor compatibility.
 
 ## Hard Stops
 
